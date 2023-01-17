@@ -1,22 +1,34 @@
-import React from 'react'
-import App from 'next/app'
-import ReactDOM from 'react-dom'
-import ATCSimulator from './ATCSimulator'
+import React from 'react';
 
-class MyApp extends App {
+class ATCSimulator extends React.Component {
+    static async getInitialProps() {
+        // Fetch data or perform any other logic here
+        const aircrafts = [
+            { id: 'A1', coordinates: '34.5, 45.6', flightPlan: 'flight plan 1' },
+            { id: 'A2', coordinates: '12.3, 23.4', flightPlan: 'flight plan 2' },
+            { id: 'A3', coordinates: '56.7, 67.8', flightPlan: 'flight plan 3' },
+        ];
+
+        return { aircrafts }
+    }
     render() {
-        const { Component, pageProps } = this.props;
-        return <Component {...pageProps} />
+        const { aircrafts } = this.props;
+        return (
+            <div>
+                <Map>
+                    {aircrafts.map(aircraft => (
+                        <Aircraft key={aircraft.id} aircraft={aircraft} onSelect={setSelectedAircraft} />
+                    ))}
+                </Map>
+                {selectedAircraft && (
+                    <ControlPanel
+                        aircraft={selectedAircraft}
+                        onUpdate={handleUpdate}
+                    />
+                )}
+            </div>
+        );
     }
 }
 
-MyApp.getInitialProps = async (appContext) => {
-    const appProps = await App.getInitialProps(appContext);
-    return { ...appProps }
-}
-
-if (typeof window !== 'undefined') {
-    ReactDOM.hydrate(<ATCSimulator />, document.getElementById('root'))
-}
-
-export default MyApp
+export default ATCSimulator;
